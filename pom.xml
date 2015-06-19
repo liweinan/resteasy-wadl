@@ -7,5 +7,19 @@
     <groupId>org.jboss.resteasy</groupId>
     <artifactId>resteasy-wadl</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <properties>
+        <dep.resteasy.version>3.0.11.Final-SNAPSHOT</dep.resteasy.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>${dep.resteasy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>jaxrs-api</artifactId>
+            <version>${dep.resteasy.version}</version>
+        </dependency>
+    </dependencies>
 </project>
