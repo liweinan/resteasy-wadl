@@ -36,7 +36,7 @@
 
     <servlet-mapping>
         <servlet-name>RESTEasy WADL</servlet-name>
-        <url-pattern>/application</url-pattern>
+        <url-pattern>/application.xml</url-pattern>
     </servlet-mapping>
 
 </web-app>

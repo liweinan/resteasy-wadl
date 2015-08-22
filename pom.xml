@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <dep.resteasy.version>3.0.12.Final</dep.resteasy.version>
+        <dep.jboss-logging-annotations.version>1.2.0.Final</dep.jboss-logging-annotations.version>
     </properties>
     <dependencies>
         <dependency>
@@ -36,6 +37,22 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-annotations</artifactId>
+            <version>${dep.jboss-logging-annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.1.4.GA-redhat-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-processor</artifactId>
+            <version>${dep.jboss-logging-annotations.version}</version>
         </dependency>
     </dependencies>
     <build>

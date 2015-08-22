@@ -17,6 +17,7 @@ public class TestWADL_JAXB_Types {
     public void testA() throws Exception {
         ObjectFactory factory = new ObjectFactory();
         Application app = factory.createApplication();
+        app.getResources();
         JAXBContext context = JAXBContext.newInstance(Application.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

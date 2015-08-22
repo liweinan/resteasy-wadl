@@ -79,8 +79,7 @@ public class ResteasyWadlServlet extends HttpServlet {
             for (Map.Entry<String, ResteasyDeployment> entry : deployments.entrySet())
             {
                 ResourceMethodRegistry registry = (ResourceMethodRegistry) entry.getValue().getRegistry();
-                ResteasyProviderFactory providerFactory =
-                        (ResteasyProviderFactory) entry.getValue().getProviderFactory();
+                ResteasyProviderFactory providerFactory = entry.getValue().getProviderFactory();
                 ResteasyWadlServiceRegistry service = new ResteasyWadlServiceRegistry(null, registry, providerFactory, null);
                 services.put(entry.getKey(), service);
             }
