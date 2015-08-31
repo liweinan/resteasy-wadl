@@ -1,0 +1,35 @@
+<application xmlns="http://wadl.dev.java.net/2009/02">
+    <doc xmlns:jersey="http://jersey.java.net/" jersey:generatedBy="Jersey: 2.21 2015-08-14 21:41:51"/>
+    <doc xmlns:jersey="http://jersey.java.net/"
+         jersey:hint="This is simplified WADL with user and core resources only. To get full WADL with extended resources use the query parameter detail. Link: http://127.0.0.1:8081/application.wadl?detail=true"/>
+    <grammars/>
+    <resources base="http://127.0.0.1:8081/">
+        <resource path="/martian">
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="name" style="template" type="xs:string"/>
+            <method id="hello" name="GET">
+                <response>
+                    <representation mediaType="*/*"/>
+                </response>
+            </method>
+            <method id="input" name="POST"/>
+            <resource path="/ab/{a}">
+                <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="a" style="template" type="xs:string"/>
+                <method id="abc" name="GET">
+                    <request>
+                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:int"
+                               path="b"/>
+                    </request>
+                    <response>
+                        <representation mediaType="*/*"/>
+                    </response>
+                </method>
+            </resource>
+        </resource>
+        <resource path="minus">...</resource>
+        <resource path="q">...</resource>
+        <resource path="myresource">...</resource>
+        <resource path="/add">...</resource>
+        <resource path="/smoke">...</resource>
+        <resource path="erroneous">...</resource>
+    </resources>
+</application>

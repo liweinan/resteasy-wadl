@@ -6,7 +6,7 @@
 //
 
 
-package net.java.dev.wadl._2009._02;
+package org.jboss.resteasy.wadl.jaxb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +17,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -40,16 +38,19 @@ import org.w3c.dom.Element;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}doc" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://wadl.dev.java.net/2009/02}param" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://wadl.dev.java.net/2009/02}method"/>
- *           &lt;element ref="{http://wadl.dev.java.net/2009/02}resource"/>
- *         &lt;/choice>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}option" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}link" minOccurs="0"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}NMTOKEN" />
+ *       &lt;attribute name="style" type="{http://wadl.dev.java.net/2009/02}ParamStyle" />
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *       &lt;attribute name="type" type="{http://wadl.dev.java.net/2009/02}resource_type_list" />
- *       &lt;attribute name="queryType" type="{http://www.w3.org/2001/XMLSchema}string" default="application/x-www-form-urlencoded" />
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" default="xs:string" />
+ *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="repeating" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="fixed" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="path" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/restriction>
@@ -62,31 +63,42 @@ import org.w3c.dom.Element;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "doc",
-    "param",
-    "methodOrResource",
+    "option",
+    "link",
     "any"
 })
-@XmlRootElement(name = "resource")
-public class Resource {
+@XmlRootElement(name = "param")
+public class Param {
 
     protected List<Doc> doc;
-    protected List<Param> param;
-    @XmlElements({
-        @XmlElement(name = "method", type = Method.class),
-        @XmlElement(name = "resource", type = Resource.class)
-    })
-    protected List<Object> methodOrResource;
+    protected List<Option> option;
+    protected Link link;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
+    @XmlAttribute(name = "href")
+    @XmlSchemaType(name = "anyURI")
+    protected String href;
+    @XmlAttribute(name = "name")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "NMTOKEN")
+    protected String name;
+    @XmlAttribute(name = "style")
+    protected ParamStyle style;
     @XmlAttribute(name = "id")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
     protected String id;
     @XmlAttribute(name = "type")
-    protected List<String> type;
-    @XmlAttribute(name = "queryType")
-    protected String queryType;
+    protected String type;
+    @XmlAttribute(name = "default")
+    protected String _default;
+    @XmlAttribute(name = "required")
+    protected Boolean required;
+    @XmlAttribute(name = "repeating")
+    protected Boolean repeating;
+    @XmlAttribute(name = "fixed")
+    protected String fixed;
     @XmlAttribute(name = "path")
     protected String path;
     @XmlAnyAttribute
@@ -122,62 +134,56 @@ public class Resource {
     }
 
     /**
-     * Gets the value of the param property.
+     * Gets the value of the option property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the param property.
+     * This is why there is not a <CODE>set</CODE> method for the option property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getParam().add(newItem);
+     *    getOption().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Param }
+     * {@link Option }
      * 
      * 
      */
-    public List<Param> getParam() {
-        if (param == null) {
-            param = new ArrayList<Param>();
+    public List<Option> getOption() {
+        if (option == null) {
+            option = new ArrayList<Option>();
         }
-        return this.param;
+        return this.option;
     }
 
     /**
-     * Gets the value of the methodOrResource property.
+     * Gets the value of the link property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the methodOrResource property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMethodOrResource().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Method }
-     * {@link Resource }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link Link }
+     *     
      */
-    public List<Object> getMethodOrResource() {
-        if (methodOrResource == null) {
-            methodOrResource = new ArrayList<Object>();
-        }
-        return this.methodOrResource;
+    public Link getLink() {
+        return link;
+    }
+
+    /**
+     * Sets the value of the link property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Link }
+     *     
+     */
+    public void setLink(Link value) {
+        this.link = value;
     }
 
     /**
@@ -211,6 +217,78 @@ public class Resource {
     }
 
     /**
+     * Gets the value of the href property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * Sets the value of the href property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHref(String value) {
+        this.href = value;
+    }
+
+    /**
+     * Gets the value of the name property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the value of the name property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
+
+    /**
+     * Gets the value of the style property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ParamStyle }
+     *     
+     */
+    public ParamStyle getStyle() {
+        return style;
+    }
+
+    /**
+     * Sets the value of the style property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ParamStyle }
+     *     
+     */
+    public void setStyle(ParamStyle value) {
+        this.style = value;
+    }
+
+    /**
      * Gets the value of the id property.
      * 
      * @return
@@ -237,58 +315,133 @@ public class Resource {
     /**
      * Gets the value of the type property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the type property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getType().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link QName }
+     *     
      */
-    public List<String> getType() {
+    public String getType() {
         if (type == null) {
-            type = new ArrayList<String>();
+            return "";
+        } else {
+            return type;
         }
-        return this.type;
     }
 
     /**
-     * Gets the value of the queryType property.
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link QName }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
+    }
+
+    /**
+     * Gets the value of the default property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getQueryType() {
-        if (queryType == null) {
-            return "application/x-www-form-urlencoded";
-        } else {
-            return queryType;
-        }
+    public String getDefault() {
+        return _default;
     }
 
     /**
-     * Sets the value of the queryType property.
+     * Sets the value of the default property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setQueryType(String value) {
-        this.queryType = value;
+    public void setDefault(String value) {
+        this._default = value;
+    }
+
+    /**
+     * Gets the value of the required property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isRequired() {
+        if (required == null) {
+            return false;
+        } else {
+            return required;
+        }
+    }
+
+    /**
+     * Sets the value of the required property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setRequired(Boolean value) {
+        this.required = value;
+    }
+
+    /**
+     * Gets the value of the repeating property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isRepeating() {
+        if (repeating == null) {
+            return false;
+        } else {
+            return repeating;
+        }
+    }
+
+    /**
+     * Sets the value of the repeating property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setRepeating(Boolean value) {
+        this.repeating = value;
+    }
+
+    /**
+     * Gets the value of the fixed property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFixed() {
+        return fixed;
+    }
+
+    /**
+     * Sets the value of the fixed property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFixed(String value) {
+        this.fixed = value;
     }
 
     /**

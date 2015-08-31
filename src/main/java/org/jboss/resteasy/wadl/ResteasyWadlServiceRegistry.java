@@ -11,6 +11,7 @@ import org.jboss.resteasy.util.GetRestful;
 import javax.ws.rs.Path;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,16 +23,15 @@ public class ResteasyWadlServiceRegistry {
     private final static Logger logger = Logger
             .getLogger(ResteasyWadlServiceRegistry.class);
 
-
     private ResourceMethodRegistry registry;
 
     private ResteasyProviderFactory providerFactory;
 
     private ResteasyWadlServiceRegistry parent;
 
-    private ArrayList<ResteasyWadlMethodMetaData> methods;
+    private Map<String, ResteasyWadlResourceMetaData> resources;
 
-    private ArrayList<ResteasyWadlServiceRegistry> locators;
+    private List<ResteasyWadlServiceRegistry> locators;
 
     private ResourceLocator locator;
 
@@ -60,13 +60,21 @@ public class ResteasyWadlServiceRegistry {
     }
 
     private void scanRegistry() {
-        methods = new ArrayList<ResteasyWadlMethodMetaData>();
+        resources = new HashMap<String, ResteasyWadlResourceMetaData>();
+
         locators = new ArrayList<ResteasyWadlServiceRegistry>();
+
         for (Map.Entry<String, List<ResourceInvoker>> entry : registry.getBounded().entrySet()) {
             List<ResourceInvoker> invokers = entry.getValue();
             for (ResourceInvoker invoker : invokers) {
                 if (invoker instanceof ResourceMethodInvoker) {
-                    methods.add(new ResteasyWadlMethodMetaData(this, (ResourceMethodInvoker) invoker));
+                    ResteasyWadlMethodMetaData methodMetaData = new ResteasyWadlMethodMetaData(this, (ResourceMethodInvoker) invoker);
+                    ResteasyWadlResourceMetaData resourceMetaData = resources.get(methodMetaData.getKlassUri());
+                    if (resourceMetaData == null) {
+                        resourceMetaData = new ResteasyWadlResourceMetaData(methodMetaData.getKlassUri());
+                        resources.put(methodMetaData.getUri(), resourceMetaData);
+                    }
+                    resourceMetaData.addMethodMetaData(methodMetaData);
                 } else if (invoker instanceof ResourceLocator) {
                     ResourceLocator locator = (ResourceLocator) invoker;
                     Method method = locator.getMethod();
@@ -90,9 +98,8 @@ public class ResteasyWadlServiceRegistry {
         }
     }
 
-
-    public List<ResteasyWadlMethodMetaData> getMethodMetaData() {
-        return methods;
+    public Map<String, ResteasyWadlResourceMetaData> getResources() {
+        return resources;
     }
 
     public List<ResteasyWadlServiceRegistry> getLocators() {

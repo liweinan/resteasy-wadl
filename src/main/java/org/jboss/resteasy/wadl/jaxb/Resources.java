@@ -6,7 +6,7 @@
 //
 
 
-package net.java.dev.wadl._2009._02;
+package org.jboss.resteasy.wadl.jaxb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,13 +18,9 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
@@ -40,14 +36,10 @@ import org.w3c.dom.Element;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}doc" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://wadl.dev.java.net/2009/02}param" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://wadl.dev.java.net/2009/02}method"/>
- *           &lt;element ref="{http://wadl.dev.java.net/2009/02}resource"/>
- *         &lt;/choice>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}resource" maxOccurs="unbounded"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *       &lt;attribute name="base" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -59,27 +51,20 @@ import org.w3c.dom.Element;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "doc",
-    "param",
-    "methodOrResource",
+    "resource",
     "any"
 })
-@XmlRootElement(name = "resource_type")
-public class ResourceType {
+@XmlRootElement(name = "resources")
+public class Resources {
 
     protected List<Doc> doc;
-    protected List<Param> param;
-    @XmlElements({
-        @XmlElement(name = "method", type = Method.class),
-        @XmlElement(name = "resource", type = Resource.class)
-    })
-    protected List<Object> methodOrResource;
+    @XmlElement(required = true)
+    protected List<Resource> resource;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
-    @XmlAttribute(name = "id")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String id;
+    @XmlAttribute(name = "base")
+    @XmlSchemaType(name = "anyURI")
+    protected String base;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -113,62 +98,32 @@ public class ResourceType {
     }
 
     /**
-     * Gets the value of the param property.
+     * Gets the value of the resource property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the param property.
+     * This is why there is not a <CODE>set</CODE> method for the resource property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getParam().add(newItem);
+     *    getResource().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Param }
-     * 
-     * 
-     */
-    public List<Param> getParam() {
-        if (param == null) {
-            param = new ArrayList<Param>();
-        }
-        return this.param;
-    }
-
-    /**
-     * Gets the value of the methodOrResource property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the methodOrResource property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMethodOrResource().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Method }
      * {@link Resource }
      * 
      * 
      */
-    public List<Object> getMethodOrResource() {
-        if (methodOrResource == null) {
-            methodOrResource = new ArrayList<Object>();
+    public List<Resource> getResource() {
+        if (resource == null) {
+            resource = new ArrayList<Resource>();
         }
-        return this.methodOrResource;
+        return this.resource;
     }
 
     /**
@@ -202,27 +157,27 @@ public class ResourceType {
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the base property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getBase() {
+        return base;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the base property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setBase(String value) {
+        this.base = value;
     }
 
     /**

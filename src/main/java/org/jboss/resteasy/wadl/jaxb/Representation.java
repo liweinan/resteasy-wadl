@@ -6,7 +6,7 @@
 //
 
 
-package net.java.dev.wadl._2009._02;
+package org.jboss.resteasy.wadl.jaxb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +16,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
@@ -34,9 +39,13 @@ import org.w3c.dom.Element;
  *       &lt;sequence>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}doc" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}param" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://wadl.dev.java.net/2009/02}representation" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *       &lt;attribute name="element" type="{http://www.w3.org/2001/XMLSchema}QName" />
+ *       &lt;attribute name="mediaType" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="profile" type="{http://wadl.dev.java.net/2009/02}uriList" />
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -49,17 +58,29 @@ import org.w3c.dom.Element;
 @XmlType(name = "", propOrder = {
     "doc",
     "param",
-    "representation",
     "any"
 })
-@XmlRootElement(name = "request")
-public class Request {
+@XmlRootElement(name = "representation")
+public class Representation {
 
     protected List<Doc> doc;
     protected List<Param> param;
-    protected List<Representation> representation;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
+    @XmlAttribute(name = "id")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    @XmlSchemaType(name = "ID")
+    protected String id;
+    @XmlAttribute(name = "element")
+    protected QName element;
+    @XmlAttribute(name = "mediaType")
+    protected String mediaType;
+    @XmlAttribute(name = "href")
+    @XmlSchemaType(name = "anyURI")
+    protected String href;
+    @XmlAttribute(name = "profile")
+    protected List<String> profile;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -122,35 +143,6 @@ public class Request {
     }
 
     /**
-     * Gets the value of the representation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the representation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRepresentation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Representation }
-     * 
-     * 
-     */
-    public List<Representation> getRepresentation() {
-        if (representation == null) {
-            representation = new ArrayList<Representation>();
-        }
-        return this.representation;
-    }
-
-    /**
      * Gets the value of the any property.
      * 
      * <p>
@@ -178,6 +170,131 @@ public class Request {
             any = new ArrayList<Object>();
         }
         return this.any;
+    }
+
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setId(String value) {
+        this.id = value;
+    }
+
+    /**
+     * Gets the value of the element property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link QName }
+     *     
+     */
+    public QName getElement() {
+        return element;
+    }
+
+    /**
+     * Sets the value of the element property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link QName }
+     *     
+     */
+    public void setElement(QName value) {
+        this.element = value;
+    }
+
+    /**
+     * Gets the value of the mediaType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    /**
+     * Sets the value of the mediaType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMediaType(String value) {
+        this.mediaType = value;
+    }
+
+    /**
+     * Gets the value of the href property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * Sets the value of the href property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHref(String value) {
+        this.href = value;
+    }
+
+    /**
+     * Gets the value of the profile property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the profile property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getProfile().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getProfile() {
+        if (profile == null) {
+            profile = new ArrayList<String>();
+        }
+        return this.profile;
     }
 
     /**

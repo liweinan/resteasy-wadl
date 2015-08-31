@@ -6,7 +6,7 @@
 //
 
 
-package net.java.dev.wadl._2009._02;
+package org.jboss.resteasy.wadl.jaxb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +18,10 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
@@ -34,11 +37,11 @@ import org.w3c.dom.Element;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}doc" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://wadl.dev.java.net/2009/02}param" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://wadl.dev.java.net/2009/02}representation" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="status" type="{http://wadl.dev.java.net/2009/02}statusCodeList" />
+ *       &lt;attribute name="resource_type" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="rel" type="{http://www.w3.org/2001/XMLSchema}token" />
+ *       &lt;attribute name="rev" type="{http://www.w3.org/2001/XMLSchema}token" />
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -50,20 +53,25 @@ import org.w3c.dom.Element;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "doc",
-    "param",
-    "representation",
     "any"
 })
-@XmlRootElement(name = "response")
-public class Response {
+@XmlRootElement(name = "link")
+public class Link {
 
     protected List<Doc> doc;
-    protected List<Param> param;
-    protected List<Representation> representation;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
-    @XmlAttribute(name = "status")
-    protected List<Long> status;
+    @XmlAttribute(name = "resource_type")
+    @XmlSchemaType(name = "anyURI")
+    protected String resourceType;
+    @XmlAttribute(name = "rel")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "token")
+    protected String rel;
+    @XmlAttribute(name = "rev")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "token")
+    protected String rev;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -97,64 +105,6 @@ public class Response {
     }
 
     /**
-     * Gets the value of the param property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the param property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParam().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Param }
-     * 
-     * 
-     */
-    public List<Param> getParam() {
-        if (param == null) {
-            param = new ArrayList<Param>();
-        }
-        return this.param;
-    }
-
-    /**
-     * Gets the value of the representation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the representation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRepresentation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Representation }
-     * 
-     * 
-     */
-    public List<Representation> getRepresentation() {
-        if (representation == null) {
-            representation = new ArrayList<Representation>();
-        }
-        return this.representation;
-    }
-
-    /**
      * Gets the value of the any property.
      * 
      * <p>
@@ -185,32 +135,75 @@ public class Response {
     }
 
     /**
-     * Gets the value of the status property.
+     * Gets the value of the resourceType property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the status property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStatus().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public List<Long> getStatus() {
-        if (status == null) {
-            status = new ArrayList<Long>();
-        }
-        return this.status;
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    /**
+     * Sets the value of the resourceType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setResourceType(String value) {
+        this.resourceType = value;
+    }
+
+    /**
+     * Gets the value of the rel property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRel() {
+        return rel;
+    }
+
+    /**
+     * Sets the value of the rel property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRel(String value) {
+        this.rel = value;
+    }
+
+    /**
+     * Gets the value of the rev property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRev() {
+        return rev;
+    }
+
+    /**
+     * Sets the value of the rev property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRev(String value) {
+        this.rev = value;
     }
 
     /**

@@ -1,0 +1,29 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<application xmlns="http://wadl.dev.java.net/2009/02">
+    <resources base="http://127.0.0.1:8080/resteasy-wadl/resteasy">
+        <resource path="/martian">
+            <param name="name" style="template" type="class java.lang.String"/>
+            <method id="input" name="POST">
+                <response>
+                    <representation/>
+                </response>
+            </method>
+            <method id="hello" name="GET">
+                <response>
+                    <representation/>
+                </response>
+            </method>
+            <resource path="/ab/{a}">
+                <param name="a" style="template" type="class java.lang.String"/>
+                <method id="abc" name="GET">
+                    <request>
+                        <param name="Cookie" style="header" type="int"/>
+                    </request>
+                    <response>
+                        <representation/>
+                    </response>
+                </method>
+            </resource>
+        </resource>
+    </resources>
+</application>

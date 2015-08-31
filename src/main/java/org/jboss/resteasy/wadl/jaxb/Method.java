@@ -6,7 +6,7 @@
 //
 
 
-package net.java.dev.wadl._2009._02;
+package org.jboss.resteasy.wadl.jaxb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +17,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
@@ -34,10 +38,13 @@ import org.w3c.dom.Element;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}doc" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}request" minOccurs="0"/>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}response" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="mediaType" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *       &lt;attribute name="name" type="{http://wadl.dev.java.net/2009/02}Method" />
+ *       &lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -49,18 +56,28 @@ import org.w3c.dom.Element;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "doc",
+    "request",
+    "response",
     "any"
 })
-@XmlRootElement(name = "option")
-public class Option {
+@XmlRootElement(name = "method")
+public class Method {
 
     protected List<Doc> doc;
+    protected Request request;
+    protected List<Response> response;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
-    @XmlAttribute(name = "value", required = true)
-    protected String value;
-    @XmlAttribute(name = "mediaType")
-    protected String mediaType;
+    @XmlAttribute(name = "id")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    @XmlSchemaType(name = "ID")
+    protected String id;
+    @XmlAttribute(name = "name")
+    protected String name;
+    @XmlAttribute(name = "href")
+    @XmlSchemaType(name = "anyURI")
+    protected String href;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -94,6 +111,59 @@ public class Option {
     }
 
     /**
+     * Gets the value of the request property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Request }
+     *     
+     */
+    public Request getRequest() {
+        return request;
+    }
+
+    /**
+     * Sets the value of the request property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Request }
+     *     
+     */
+    public void setRequest(Request value) {
+        this.request = value;
+    }
+
+    /**
+     * Gets the value of the response property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the response property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getResponse().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Response }
+     * 
+     * 
+     */
+    public List<Response> getResponse() {
+        if (response == null) {
+            response = new ArrayList<Response>();
+        }
+        return this.response;
+    }
+
+    /**
      * Gets the value of the any property.
      * 
      * <p>
@@ -124,51 +194,75 @@ public class Option {
     }
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the id property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getValue() {
-        return value;
+    public String getId() {
+        return id;
     }
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the id property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setId(String value) {
+        this.id = value;
     }
 
     /**
-     * Gets the value of the mediaType property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getMediaType() {
-        return mediaType;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the mediaType property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setMediaType(String value) {
-        this.mediaType = value;
+    public void setName(String value) {
+        this.name = value;
+    }
+
+    /**
+     * Gets the value of the href property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * Sets the value of the href property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHref(String value) {
+        this.href = value;
     }
 
     /**

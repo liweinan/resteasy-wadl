@@ -34,15 +34,35 @@ public class ResteasyWadlMethodMetaData {
     private ResteasyWadlServiceRegistry registry;
     private String functionPrefix;
     private boolean wantsForm;
+    private String methodUri;
+    private String klassUri;
 
-    public ResteasyWadlMethodMetaData(ResteasyWadlServiceRegistry serviceRegistry, ResourceMethodInvoker resource)
-    {
+    public String getMethodUri() {
+        return methodUri;
+    }
+
+    public void setMethodUri(String methodUri) {
+        this.methodUri = methodUri;
+    }
+
+    public String getKlassUri() {
+        return klassUri;
+    }
+
+    public void setKlassUri(String klassUri) {
+        this.klassUri = klassUri;
+    }
+
+    public ResteasyWadlMethodMetaData(ResteasyWadlServiceRegistry serviceRegistry, ResourceMethodInvoker resource) {
         this.registry = serviceRegistry;
         this.resource = resource;
         this.method = resource.getMethod();
         this.klass = resource.getResourceClass();
         Path methodPath = method.getAnnotation(Path.class);
+        methodUri = methodPath == null ? null : methodPath.value();
         Path klassPath = klass.getAnnotation(Path.class);
+        klassUri = klassPath == null ? null : klassPath.value();
+
         Produces produces = method.getAnnotation(Produces.class);
         if (produces == null)
             produces = klass.getAnnotation(Produces.class);
@@ -51,7 +71,7 @@ public class ResteasyWadlMethodMetaData {
         if (consumes == null)
             consumes = klass.getAnnotation(Consumes.class);
         this.uri = appendURIFragments(registry, klassPath, methodPath);
-        if(serviceRegistry.isRoot())
+        if (serviceRegistry.isRoot())
             this.functionPrefix = klass.getSimpleName();
         else
             this.functionPrefix = serviceRegistry.getFunctionPrefix();
@@ -65,87 +85,73 @@ public class ResteasyWadlMethodMetaData {
         for (Method method : methodsUntilRoot) {
             Annotation[][] allAnnotations = method.getParameterAnnotations();
             Class<?>[] parameterTypes = method.getParameterTypes();
-            for (int i = 0; i < parameterTypes.length; i++)
-            {
+            for (int i = 0; i < parameterTypes.length; i++) {
                 processMetaData(parameterTypes[i], allAnnotations[i], true);
             }
         }
         // this must be after we scan the params in case of @Form
         this.consumesMIMEType = getConsumes(consumes);
-        if(wantsForm && !"application/x-www-form-urlencoded".equals(consumesMIMEType)){
+        if (wantsForm && !"application/x-www-form-urlencoded".equals(consumesMIMEType)) {
             logger.warn("Overriding @Consumes annotation in favour of application/x-www-form-urlencoded due to the presence of @FormParam");
             this.consumesMIMEType = "application/x-www-form-urlencoded";
         }
     }
 
     protected void processMetaData(Class<?> type, Annotation[] annotations,
-                                   boolean useBody)
-    {
-        QueryParam query;
-        HeaderParam header;
-        MatrixParam matrix;
-        PathParam uriParam;
-        CookieParam cookie;
+                                   boolean useBody) {
+        QueryParam queryParam;
+        HeaderParam headerParam;
+        MatrixParam matrixParam;
+        PathParam pathParam;
+        CookieParam cookieParam;
         FormParam formParam;
         Form form;
 
         // boolean isEncoded = FindAnnotation.findAnnotation(annotations,
         // Encoded.class) != null;
 
-        if ((query = FindAnnotation.findAnnotation(annotations, QueryParam.class)) != null)
-        {
-            addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.QUERY_PARAMETER, query
+        if ((queryParam = FindAnnotation.findAnnotation(annotations, QueryParam.class)) != null) {
+            addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.QUERY_PARAMETER, queryParam
                     .value());
-        } else if ((header = FindAnnotation.findAnnotation(annotations,
-                HeaderParam.class)) != null)
-        {
+        } else if ((headerParam = FindAnnotation.findAnnotation(annotations,
+                HeaderParam.class)) != null) {
             addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.HEADER_PARAMETER,
-                    header.value());
-        } else if ((cookie = FindAnnotation.findAnnotation(annotations,
-                CookieParam.class)) != null)
-        {
+                    headerParam.value());
+        } else if ((cookieParam = FindAnnotation.findAnnotation(annotations,
+                CookieParam.class)) != null) {
             addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.COOKIE_PARAMETER,
-                    cookie.value());
-        } else if ((uriParam = FindAnnotation.findAnnotation(annotations,
-                PathParam.class)) != null)
-        {
+                    cookieParam.value());
+        } else if ((pathParam = FindAnnotation.findAnnotation(annotations,
+                PathParam.class)) != null) {
             addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.PATH_PARAMETER,
-                    uriParam.value());
-        } else if ((matrix = FindAnnotation.findAnnotation(annotations,
-                MatrixParam.class)) != null)
-        {
+                    pathParam.value());
+        } else if ((matrixParam = FindAnnotation.findAnnotation(annotations,
+                MatrixParam.class)) != null) {
             addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.MATRIX_PARAMETER,
-                    matrix.value());
+                    matrixParam.value());
         } else if ((formParam = FindAnnotation.findAnnotation(annotations,
-                FormParam.class)) != null)
-        {
+                FormParam.class)) != null) {
             addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.FORM_PARAMETER,
                     formParam.value());
             this.wantsForm = true;
-        } else if ((form = FindAnnotation.findAnnotation(annotations, Form.class)) != null)
-        {
+        } else if ((form = FindAnnotation.findAnnotation(annotations, Form.class)) != null) {
             if (type == Map.class || type == List.class) {
                 addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.FORM, form.prefix());
                 this.wantsForm = true;
             } else
                 walkForm(type);
-        } else if ((FindAnnotation.findAnnotation(annotations, Context.class)) != null)
-        {
+        } else if ((FindAnnotation.findAnnotation(annotations, Context.class)) != null) {
             // righfully ignore
-        } else if (useBody)
-        {
+        } else if (useBody) {
             addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.ENTITY_PARAMETER, null);
         }
     }
 
-    private void walkForm(Class<?> type)
-    {
-        for (Field field : type.getDeclaredFields())
-        {
+    private void walkForm(Class<?> type) {
+        for (Field field : type.getDeclaredFields()) {
             processMetaData(field.getType(), field.getAnnotations(), false);
         }
-        for (Method method : type.getDeclaredMethods())
-        {
+        for (Method method : type.getDeclaredMethods()) {
             if (method.getParameterTypes().length != 1
                     || !method.getReturnType().equals(Void.class))
                 continue;
@@ -158,14 +164,12 @@ public class ResteasyWadlMethodMetaData {
     }
 
     private void addParameter(Class<?> type, Annotation[] annotations,
-                              ResteasyWadlMethodParamMetaData.MethodParamType paramType, String value)
-    {
+                              ResteasyWadlMethodParamMetaData.MethodParamType paramType, String value) {
         this.parameters.add(new ResteasyWadlMethodParamMetaData(type, annotations, paramType,
                 value));
     }
 
-    private String getWants(Produces produces)
-    {
+    private String getWants(Produces produces) {
         if (produces == null)
             return null;
         String[] value = produces.value();
@@ -174,8 +178,7 @@ public class ResteasyWadlMethodMetaData {
         if (value.length == 1)
             return value[0];
         StringBuffer buf = new StringBuffer();
-        for (String mime : produces.value())
-        {
+        for (String mime : produces.value()) {
             if (buf.length() != 0)
                 buf.append(",");
             buf.append(mime);
@@ -183,8 +186,7 @@ public class ResteasyWadlMethodMetaData {
         return buf.toString();
     }
 
-    private String getConsumes(Consumes consumes)
-    {
+    private String getConsumes(Consumes consumes) {
         if (consumes == null)
             return "text/plain";
         if (consumes.value().length > 0)
@@ -192,11 +194,9 @@ public class ResteasyWadlMethodMetaData {
         return "text/plain";
     }
 
-    public static String appendURIFragments(String... fragments)
-    {
+    public static String appendURIFragments(String... fragments) {
         StringBuilder str = new StringBuilder();
-        for (String fragment : fragments)
-        {
+        for (String fragment : fragments) {
             if (fragment == null || fragment.length() == 0 || fragment.equals("/"))
                 continue;
             if (fragment.startsWith("/"))
@@ -210,48 +210,39 @@ public class ResteasyWadlMethodMetaData {
         return str.toString();
     }
 
-    public ResourceMethodInvoker getResource()
-    {
+    public ResourceMethodInvoker getResource() {
         return resource;
     }
 
-    public Method getMethod()
-    {
+    public Method getMethod() {
         return method;
     }
 
-    public Class<?> getKlass()
-    {
+    public Class<?> getKlass() {
         return klass;
     }
 
-    public String getWants()
-    {
+    public String getWants() {
         return wants;
     }
 
-    public String getConsumesMIMEType()
-    {
+    public String getConsumesMIMEType() {
         return consumesMIMEType;
     }
 
-    public String getUri()
-    {
+    public String getUri() {
         return uri;
     }
 
-    public String getFunctionName()
-    {
+    public String getFunctionName() {
         return functionName;
     }
 
-    public List<ResteasyWadlMethodParamMetaData> getParameters()
-    {
+    public List<ResteasyWadlMethodParamMetaData> getParameters() {
         return parameters;
     }
 
-    public Collection<String> getHttpMethods()
-    {
+    public Collection<String> getHttpMethods() {
         return httpMethods;
     }
 

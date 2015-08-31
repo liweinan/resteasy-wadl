@@ -6,7 +6,7 @@
 //
 
 
-package net.java.dev.wadl._2009._02;
+package org.jboss.resteasy.wadl.jaxb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,9 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
@@ -36,10 +34,11 @@ import org.w3c.dom.Element;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://wadl.dev.java.net/2009/02}doc" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://wadl.dev.java.net/2009/02}resource" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}param" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://wadl.dev.java.net/2009/02}representation" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="base" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="status" type="{http://wadl.dev.java.net/2009/02}statusCodeList" />
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -51,20 +50,20 @@ import org.w3c.dom.Element;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "doc",
-    "resource",
+    "param",
+    "representation",
     "any"
 })
-@XmlRootElement(name = "resources")
-public class Resources {
+@XmlRootElement(name = "response")
+public class Response {
 
     protected List<Doc> doc;
-    @XmlElement(required = true)
-    protected List<Resource> resource;
+    protected List<Param> param;
+    protected List<Representation> representation;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
-    @XmlAttribute(name = "base")
-    @XmlSchemaType(name = "anyURI")
-    protected String base;
+    @XmlAttribute(name = "status")
+    protected List<Long> status;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -98,32 +97,61 @@ public class Resources {
     }
 
     /**
-     * Gets the value of the resource property.
+     * Gets the value of the param property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resource property.
+     * This is why there is not a <CODE>set</CODE> method for the param property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getResource().add(newItem);
+     *    getParam().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Resource }
+     * {@link Param }
      * 
      * 
      */
-    public List<Resource> getResource() {
-        if (resource == null) {
-            resource = new ArrayList<Resource>();
+    public List<Param> getParam() {
+        if (param == null) {
+            param = new ArrayList<Param>();
         }
-        return this.resource;
+        return this.param;
+    }
+
+    /**
+     * Gets the value of the representation property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the representation property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getRepresentation().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Representation }
+     * 
+     * 
+     */
+    public List<Representation> getRepresentation() {
+        if (representation == null) {
+            representation = new ArrayList<Representation>();
+        }
+        return this.representation;
     }
 
     /**
@@ -157,27 +185,32 @@ public class Resources {
     }
 
     /**
-     * Gets the value of the base property.
+     * Gets the value of the status property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getBase() {
-        return base;
-    }
-
-    /**
-     * Sets the value of the base property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the status property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getStatus().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Long }
+     * 
+     * 
      */
-    public void setBase(String value) {
-        this.base = value;
+    public List<Long> getStatus() {
+        if (status == null) {
+            status = new ArrayList<Long>();
+        }
+        return this.status;
     }
 
     /**
