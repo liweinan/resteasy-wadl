@@ -1,26 +1,33 @@
-This XML file does not appear to have any style information associated with it. The document tree is shown below.
 <application xmlns="http://wadl.dev.java.net/2009/02">
     <resources base="http://127.0.0.1:8080/resteasy-wadl/resteasy">
         <resource path="/martian">
-            <param name="name" style="template" type="class java.lang.String"/>
-            <method id="input" name="POST">
-                <response>
-                    <representation/>
-                </response>
-            </method>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="name" style="template" type="xs:class java.lang.String"/>
             <method id="hello" name="GET">
                 <response>
-                    <representation/>
+                    <representation mediaType="*/*"/>
                 </response>
             </method>
-            <resource path="/ab/{a}">
-                <param name="a" style="template" type="class java.lang.String"/>
+            <method id="input" name="POST">
+                <response>
+                    <representation mediaType="*/*"/>
+                </response>
+            </method>
+            <resource path="intr/{foo}">
+                <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="foo" style="template" type="xs:int"/>
+                <method id="integerReturn" name="GET">
+                    <response>
+                        <representation mediaType="text/plain"/>
+                    </response>
+                </method>
+            </resource>
+            <resource path="ab/{a}">
+                <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="a" style="template" type="xs:class java.lang.String"/>
                 <method id="abc" name="GET">
                     <request>
-                        <param name="Cookie" style="header" type="int"/>
+                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:int" path="b"/>
                     </request>
                     <response>
-                        <representation/>
+                        <representation mediaType="text/plain"/>
                     </response>
                 </method>
             </resource>

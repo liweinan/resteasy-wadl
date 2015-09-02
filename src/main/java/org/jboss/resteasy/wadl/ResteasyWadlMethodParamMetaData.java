@@ -11,6 +11,7 @@ public class ResteasyWadlMethodParamMetaData {
     }
 
     private Class<?> type;
+    private String typeName;
     private Annotation[] annotations;
 
     private MethodParamType paramType;
@@ -27,6 +28,12 @@ public class ResteasyWadlMethodParamMetaData {
 
     public Class<?> getType() {
         return type;
+    }
+
+    public String getTypeName() {
+        int i = 0;
+
+        return "";
     }
 
     public void setType(Class<?> type) {

@@ -25,7 +25,7 @@ public class ResteasyWadlMethodMetaData {
     private ResourceMethodInvoker resource;
     private Method method;
     private Class<?> klass;
-    private String wants;
+    private String produces;
     private String consumesMIMEType;
     private String uri;
     private String functionName;
@@ -63,10 +63,10 @@ public class ResteasyWadlMethodMetaData {
         Path klassPath = klass.getAnnotation(Path.class);
         klassUri = klassPath == null ? null : klassPath.value();
 
-        Produces produces = method.getAnnotation(Produces.class);
-        if (produces == null)
-            produces = klass.getAnnotation(Produces.class);
-        this.wants = getWants(produces);
+        Produces producesAnnotation = method.getAnnotation(Produces.class);
+        if (producesAnnotation == null)
+            producesAnnotation = klass.getAnnotation(Produces.class);
+        this.produces = getProduces(producesAnnotation);
         Consumes consumes = method.getAnnotation(Consumes.class);
         if (consumes == null)
             consumes = klass.getAnnotation(Consumes.class);
@@ -169,7 +169,7 @@ public class ResteasyWadlMethodMetaData {
                 value));
     }
 
-    private String getWants(Produces produces) {
+    private String getProduces(Produces produces) {
         if (produces == null)
             return null;
         String[] value = produces.value();
@@ -222,8 +222,8 @@ public class ResteasyWadlMethodMetaData {
         return klass;
     }
 
-    public String getWants() {
-        return wants;
+    public String getProduces() {
+        return produces;
     }
 
     public String getConsumesMIMEType() {

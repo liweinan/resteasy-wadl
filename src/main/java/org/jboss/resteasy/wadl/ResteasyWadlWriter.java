@@ -6,6 +6,7 @@ import org.jboss.resteasy.wadl.jaxb.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -13,6 +14,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -60,6 +62,7 @@ public class ResteasyWadlWriter {
         }
     }
 
+
     private void processWadl(ResteasyWadlServiceRegistry serviceRegistry, Resources root) throws JAXBException {
 
         for (Map.Entry<String, ResteasyWadlResourceMetaData> resourceMetaDataEntry : serviceRegistry.getResources().entrySet()) {
@@ -86,26 +89,6 @@ public class ResteasyWadlWriter {
                     resourceClass.getMethodOrResource().add(method);
                 }
 
-
-                for (ResteasyWadlMethodParamMetaData paramMetaData : methodMetaData.getParameters()) {
-                    // All the method's @PathParam belong to resource
-                    if (paramMetaData.getParamType().equals(ResteasyWadlMethodParamMetaData.MethodParamType.PATH_PARAMETER)) {
-                        Param param = new Param();
-                        param.setName(paramMetaData.getParamName());
-                        param.setStyle(ParamStyle.TEMPLATE);
-                        param.setType(paramMetaData.getType().toString()); // FIXME
-                        currentResourceClass.getParam().add(param);
-                    } else if (paramMetaData.getParamType().equals(ResteasyWadlMethodParamMetaData.MethodParamType.COOKIE_PARAMETER)) {
-                        Request request = new Request();
-                        Param param = new Param();
-                        request.getParam().add(param);
-                        param.setName("Cookie");
-                        param.setStyle(ParamStyle.HEADER);
-                        param.setType(paramMetaData.getType().toString()); // FIXME
-                        method.setRequest(request);
-                    }
-                }
-
                 // method name = {GET, POST, DELETE, ...}
                 for (String name : methodMetaData.getHttpMethods()) {
                     method.setName(name);
@@ -114,18 +97,82 @@ public class ResteasyWadlWriter {
                 // method id = method name
                 method.setId(methodMetaData.getMethod().getName());
 
-                // response type
-                Response response = new Response();
-                Representation representation = new Representation();
-                // FIXME: get correct response type
-                representation.setMediaType(methodMetaData.getWants());
-                response.getRepresentation().add(representation);
+                // process method parameters
+                for (ResteasyWadlMethodParamMetaData paramMetaData : methodMetaData.getParameters()) {
+                    Param param = createParam(currentResourceClass, method, paramMetaData);
+                }
 
+                // process response of method
+                Response response = createResponse(serviceRegistry, methodMetaData);
                 method.getResponse().add(response);
             }
         }
 
         for (ResteasyWadlServiceRegistry subService : serviceRegistry.getLocators())
             processWadl(subService, root);
+    }
+
+    private Response createResponse(ResteasyWadlServiceRegistry serviceRegistry, ResteasyWadlMethodMetaData methodMetaData) {
+        Response response = new Response();
+        Representation representation = new Representation();
+
+        Class _type = methodMetaData.getMethod().getReturnType();
+        Type _generic = methodMetaData.getMethod().getGenericReturnType();
+
+        MediaType mediaType = MediaType.WILDCARD_TYPE;
+
+        if (methodMetaData.getProduces() != null) {
+            mediaType = MediaType.valueOf(methodMetaData.getProduces());
+            if (mediaType == null) {
+                mediaType = serviceRegistry.getProviderFactory().getConcreteMediaTypeFromMessageBodyWriters(_type, _generic, methodMetaData.getMethod().getAnnotations(), MediaType.WILDCARD_TYPE);
+                if (mediaType == null)
+                    mediaType = MediaType.WILDCARD_TYPE;
+            }
+        }
+
+        representation.setMediaType(mediaType.toString());
+        response.getRepresentation().add(representation);
+        return response;
+    }
+
+    private Param createParam(Resource currentResourceClass, Method method, ResteasyWadlMethodParamMetaData paramMetaData) {
+        Param param = new Param();
+        // All the method's @PathParam belong to resource
+        if (paramMetaData.getParamType().equals(ResteasyWadlMethodParamMetaData.MethodParamType.PATH_PARAMETER)) {
+            param.setStyle(ParamStyle.TEMPLATE);
+            setType(param, paramMetaData);
+            param.setName(paramMetaData.getParamName());
+            currentResourceClass.getParam().add(param);
+        } else if (paramMetaData.getParamType().equals(ResteasyWadlMethodParamMetaData.MethodParamType.COOKIE_PARAMETER)) {
+            param.setStyle(ParamStyle.HEADER);
+            setType(param, paramMetaData);
+            Request request = new Request();
+            request.getParam().add(param);
+            param.setName("Cookie");
+            param.setPath(paramMetaData.getParamName());
+            method.setRequest(request);
+        }
+
+        return param;
+    }
+
+    private void setType(Param param, ResteasyWadlMethodParamMetaData paramMetaData) {
+        if (paramMetaData.getType().equals(int.class) || paramMetaData.getType().equals(Integer.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "int", "xs"));
+        } else if (paramMetaData.getType().equals(boolean.class) || paramMetaData.getType().equals(Boolean.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "boolean", "xs"));
+        } else if (paramMetaData.getType().equals(long.class) || paramMetaData.getType().equals(Long.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "long", "xs"));
+        } else if (paramMetaData.getType().equals(short.class) || paramMetaData.getType().equals(Short.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "short", "xs"));
+        } else if (paramMetaData.getType().equals(byte.class) || paramMetaData.getType().equals(Byte.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "byte", "xs"));
+        } else if (paramMetaData.getType().equals(float.class) || paramMetaData.getType().equals(Float.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "float", "xs"));
+        } else if (paramMetaData.getType().equals(double.class) || paramMetaData.getType().equals(Double.class)) {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "double", "xs"));
+        } else {
+            param.setType(new QName("http://www.w3.org/2001/XMLSchema", "string", "xs"));
+        }
     }
 }

@@ -25,6 +25,10 @@ public class ResteasyWadlServiceRegistry {
 
     private ResourceMethodRegistry registry;
 
+    public ResteasyProviderFactory getProviderFactory() {
+        return providerFactory;
+    }
+
     private ResteasyProviderFactory providerFactory;
 
     private ResteasyWadlServiceRegistry parent;

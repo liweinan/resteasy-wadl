@@ -90,7 +90,7 @@ public class Param {
     @XmlSchemaType(name = "ID")
     protected String id;
     @XmlAttribute(name = "type")
-    protected String type;
+    protected QName type;
     @XmlAttribute(name = "default")
     protected String _default;
     @XmlAttribute(name = "required")
@@ -320,9 +320,9 @@ public class Param {
      *     {@link QName }
      *     
      */
-    public String getType() {
+    public QName getType() {
         if (type == null) {
-            return "";
+            return new QName("http://www.w3.org/2001/XMLSchema", "string", "xs");
         } else {
             return type;
         }
@@ -336,7 +336,7 @@ public class Param {
      *     {@link QName }
      *     
      */
-    public void setType(String value) {
+    public void setType(QName value) {
         this.type = value;
     }
 

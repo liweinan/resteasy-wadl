@@ -25,11 +25,5 @@
                 </method>
             </resource>
         </resource>
-        <resource path="minus">...</resource>
-        <resource path="q">...</resource>
-        <resource path="myresource">...</resource>
-        <resource path="/add">...</resource>
-        <resource path="/smoke">...</resource>
-        <resource path="erroneous">...</resource>
     </resources>
 </application>
