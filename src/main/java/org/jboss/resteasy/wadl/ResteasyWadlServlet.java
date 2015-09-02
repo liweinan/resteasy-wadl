@@ -25,7 +25,7 @@ public class ResteasyWadlServlet extends HttpServlet {
     private final static Logger logger = Logger.getLogger(ResteasyWadlServlet.class);
     private Map<String, ResteasyWadlServiceRegistry> services;
 
-    private ResteasyWadlWriter apiWriter = new ResteasyWadlWriter();
+    private ResteasyWadlServletWriter apiWriter = new ResteasyWadlServletWriter();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
