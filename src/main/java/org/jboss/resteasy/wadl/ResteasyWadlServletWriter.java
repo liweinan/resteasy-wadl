@@ -100,8 +100,10 @@ public class ResteasyWadlServletWriter {
                 method.setId(methodMetaData.getMethod().getName());
 
                 // process method parameters
+                Request request = new Request();
+
                 for (ResteasyWadlMethodParamMetaData paramMetaData : methodMetaData.getParameters()) {
-                    Param param = createParam(currentResourceClass, method, paramMetaData);
+                    Param param = createParam(currentResourceClass, method, paramMetaData, request);
                 }
 
                 // process response of method
@@ -137,7 +139,7 @@ public class ResteasyWadlServletWriter {
         return response;
     }
 
-    private Param createParam(Resource currentResourceClass, Method method, ResteasyWadlMethodParamMetaData paramMetaData) {
+    private Param createParam(Resource currentResourceClass, Method method, ResteasyWadlMethodParamMetaData paramMetaData, Request request) {
         Param param = new Param();
         setType(param, paramMetaData);
 
@@ -148,20 +150,23 @@ public class ResteasyWadlServletWriter {
             currentResourceClass.getParam().add(param);
         } else if (paramMetaData.getParamType().equals(COOKIE_PARAMETER)) {
             param.setStyle(ParamStyle.HEADER);
-            Request request = new Request();
             request.getParam().add(param);
             param.setName("Cookie");
             param.setPath(paramMetaData.getParamName());
             method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(HEADER_PARAMETER)) {
             param.setStyle(ParamStyle.HEADER);
-
+            request.getParam().add(param);
+            param.setName(paramMetaData.getParamName());
+            method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(MATRIX_PARAMETER)) {
             param.setStyle(ParamStyle.MATRIX);
 
         } else if (paramMetaData.getParamType().equals(QUERY_PARAMETER)) {
             param.setStyle(ParamStyle.QUERY);
-
+            request.getParam().add(param);
+            param.setName(paramMetaData.getParamName());
+            method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(FORM_PARAMETER)) {
             param.setStyle(ParamStyle.QUERY);
 

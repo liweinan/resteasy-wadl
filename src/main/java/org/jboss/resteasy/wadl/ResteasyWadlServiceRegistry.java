@@ -76,7 +76,7 @@ public class ResteasyWadlServiceRegistry {
                     ResteasyWadlResourceMetaData resourceMetaData = resources.get(methodMetaData.getKlassUri());
                     if (resourceMetaData == null) {
                         resourceMetaData = new ResteasyWadlResourceMetaData(methodMetaData.getKlassUri());
-                        resources.put(methodMetaData.getUri(), resourceMetaData);
+                        resources.put(methodMetaData.getKlassUri(), resourceMetaData);
                     }
                     resourceMetaData.addMethodMetaData(methodMetaData);
                 } else if (invoker instanceof ResourceLocator) {

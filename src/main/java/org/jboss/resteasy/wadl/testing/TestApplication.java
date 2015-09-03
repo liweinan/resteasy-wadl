@@ -11,6 +11,7 @@ public class TestApplication extends javax.ws.rs.core.Application {
 
     public TestApplication() {
         singletons.add(new HelloMartianResource());
+        singletons.add(new Smoke());
     }
 
     @Override

@@ -1,29 +1,34 @@
-<application xmlns="http://wadl.dev.java.net/2009/02">
-    <doc xmlns:jersey="http://jersey.java.net/" jersey:generatedBy="Jersey: 2.21 2015-08-14 21:41:51"/>
-    <doc xmlns:jersey="http://jersey.java.net/"
-         jersey:hint="This is simplified WADL with user and core resources only. To get full WADL with extended resources use the query parameter detail. Link: http://127.0.0.1:8081/application.wadl?detail=true"/>
-    <grammars/>
-    <resources base="http://127.0.0.1:8081/">
-        <resource path="/martian">
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="name" style="template" type="xs:string"/>
-            <method id="hello" name="GET">
-                <response>
-                    <representation mediaType="*/*"/>
-                </response>
-            </method>
-            <method id="input" name="POST"/>
-            <resource path="/ab/{a}">
-                <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="a" style="template" type="xs:string"/>
-                <method id="abc" name="GET">
-                    <request>
-                        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:int"
-                               path="b"/>
-                    </request>
-                    <response>
-                        <representation mediaType="*/*"/>
-                    </response>
-                </method>
-            </resource>
-        </resource>
-    </resources>
-</application>
+<resource path="mixed/{p}">
+    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p1" style="template" type="xs:string"/>
+    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p2" style="template" type="xs:string"/>
+    <method id="mixed" name="GET">
+        <request>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h1" style="header" type="xs:string"/>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c1"/>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="q1" style="query" type="xs:string"/>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h2" style="header" type="xs:string"/>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c2"/>
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="q2" style="query" type="xs:string"/>
+        </request>
+        <response>
+            <representation mediaType="text/plain"/>
+        </response>
+    </method>
+</resource>
+
+
+<resource path="mixed/{p}">
+<param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p1" style="template" type="xs:string"/>
+<param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p2" style="template" type="xs:string"/>
+<method id="mixed" name="GET">
+    <request>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h1" style="header" type="xs:string"/>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c1"/>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h2" style="header" type="xs:string"/>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c2"/>
+    </request>
+    <response>
+        <representation mediaType="text/plain"/>
+    </response>
+</method>
+</resource>
