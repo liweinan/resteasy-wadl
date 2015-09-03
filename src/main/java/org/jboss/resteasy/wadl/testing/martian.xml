@@ -1,34 +1,22 @@
-<resource path="mixed/{p}">
-    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p1" style="template" type="xs:string"/>
-    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p2" style="template" type="xs:string"/>
-    <method id="mixed" name="GET">
-        <request>
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h1" style="header" type="xs:string"/>
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c1"/>
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="q1" style="query" type="xs:string"/>
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h2" style="header" type="xs:string"/>
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c2"/>
-            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="q2" style="query" type="xs:string"/>
-        </request>
-        <response>
-            <representation mediaType="text/plain"/>
-        </response>
-    </method>
-</resource>
+<request>
+    <representation mediaType="application/x-www-form-urlencoded">
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="name" style="query" type="xs:string"/>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="age" style="query" type="xs:int"/>
+    </representation>
+    <response>
+        <representation mediaType="*/*"/>
+    </response>
+</request>
 
-
-<resource path="mixed/{p}">
-<param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p1" style="template" type="xs:string"/>
-<param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="p2" style="template" type="xs:string"/>
-<method id="mixed" name="GET">
+<resource path="/add">
+<method id="addUser" name="POST">
     <request>
-        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h1" style="header" type="xs:string"/>
-        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c1"/>
-        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="h2" style="header" type="xs:string"/>
-        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="Cookie" style="header" type="xs:string" path="c2"/>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="name" style="query" type="xs:string"/>
+        <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="age" style="query" type="xs:int"/>
     </request>
     <response>
-        <representation mediaType="text/plain"/>
+        <representation mediaType="*/*"/>
     </response>
 </method>
 </resource>
+

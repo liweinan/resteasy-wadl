@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 import static org.jboss.resteasy.wadl.ResteasyWadlMethodParamMetaData.MethodParamType.*;
@@ -118,7 +119,6 @@ public class ResteasyWadlServletWriter {
 
     private Response createResponse(ResteasyWadlServiceRegistry serviceRegistry, ResteasyWadlMethodMetaData methodMetaData) {
         Response response = new Response();
-        Representation representation = new Representation();
 
         Class _type = methodMetaData.getMethod().getReturnType();
         Type _generic = methodMetaData.getMethod().getGenericReturnType();
@@ -134,7 +134,7 @@ public class ResteasyWadlServletWriter {
             }
         }
 
-        representation.setMediaType(mediaType.toString());
+        Representation representation = createRepresentation(mediaType);
         response.getRepresentation().add(representation);
         return response;
     }
@@ -161,20 +161,48 @@ public class ResteasyWadlServletWriter {
             method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(MATRIX_PARAMETER)) {
             param.setStyle(ParamStyle.MATRIX);
-
+            param.setName(paramMetaData.getParamName());
+            currentResourceClass.getParam().add(param);
         } else if (paramMetaData.getParamType().equals(QUERY_PARAMETER)) {
             param.setStyle(ParamStyle.QUERY);
             request.getParam().add(param);
             param.setName(paramMetaData.getParamName());
             method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(FORM_PARAMETER)) {
-            param.setStyle(ParamStyle.QUERY);
+            Representation formRepresentation = getRepresentationByMediaType(request.getRepresentation(),
+                    MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+            if (formRepresentation == null) {
+                formRepresentation = createRepresentation(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+                request.getRepresentation().add(formRepresentation);
+            }
 
+
+            param.setStyle(ParamStyle.QUERY);
+            param.setName(paramMetaData.getParamName());
+            formRepresentation.getParam().add(param);
+
+            method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(FORM)) {
             param.setStyle(ParamStyle.QUERY);
-
         }
         return param;
+    }
+
+    private Representation createRepresentation(MediaType mediaType) {
+        Representation representation;
+        representation = new Representation();
+        representation.setMediaType(mediaType.toString());
+        return representation;
+    }
+
+    private Representation getRepresentationByMediaType(
+            final List<Representation> representations, MediaType mediaType) {
+        for (Representation representation : representations) {
+            if (mediaType.toString().equals(representation.getMediaType())) {
+                return representation;
+            }
+        }
+        return null;
     }
 
     private void setType(Param param, ResteasyWadlMethodParamMetaData paramMetaData) {
