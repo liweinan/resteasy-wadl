@@ -22,7 +22,7 @@ public class ResteasyWadlMethodMetaData {
     private final static Logger logger = Logger
             .getLogger(ResteasyWadlMethodMetaData.class);
 
-    private ResourceMethodInvoker resource;
+    private ResourceMethodInvoker resourceInvoker;
     private Method method;
     private Class<?> klass;
     private String produces;
@@ -53,11 +53,11 @@ public class ResteasyWadlMethodMetaData {
         this.klassUri = klassUri;
     }
 
-    public ResteasyWadlMethodMetaData(ResteasyWadlServiceRegistry serviceRegistry, ResourceMethodInvoker resource) {
+    public ResteasyWadlMethodMetaData(ResteasyWadlServiceRegistry serviceRegistry, ResourceMethodInvoker resourceInvoker) {
         this.registry = serviceRegistry;
-        this.resource = resource;
-        this.method = resource.getMethod();
-        this.klass = resource.getResourceClass();
+        this.resourceInvoker = resourceInvoker;
+        this.method = resourceInvoker.getMethod();
+        this.klass = resourceInvoker.getResourceClass();
         Path methodPath = method.getAnnotation(Path.class);
         methodUri = methodPath == null ? null : methodPath.value();
         Path klassPath = klass.getAnnotation(Path.class);
@@ -76,7 +76,7 @@ public class ResteasyWadlMethodMetaData {
         else
             this.functionPrefix = serviceRegistry.getFunctionPrefix();
         this.functionName = this.functionPrefix + "." + method.getName();
-        httpMethods = resource.getHttpMethods();
+        httpMethods = resourceInvoker.getHttpMethods();
 
         // we need to add all parameters from parent resource locators until the root
         List<Method> methodsUntilRoot = new ArrayList<Method>();
@@ -135,7 +135,10 @@ public class ResteasyWadlMethodMetaData {
                     formParam.value());
             this.wantsForm = true;
         } else if ((form = FindAnnotation.findAnnotation(annotations, Form.class)) != null) {
-            if (type == Map.class || type == List.class) {
+            if (type == List.class) {
+                addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.FORM, form.prefix());
+                this.wantsForm = true;
+            } else if (type == Map.class) {
                 addParameter(type, annotations, ResteasyWadlMethodParamMetaData.MethodParamType.FORM, form.prefix());
                 this.wantsForm = true;
             } else
@@ -210,8 +213,8 @@ public class ResteasyWadlMethodMetaData {
         return str.toString();
     }
 
-    public ResourceMethodInvoker getResource() {
-        return resource;
+    public ResourceMethodInvoker getResourceInvoker() {
+        return resourceInvoker;
     }
 
     public Method getMethod() {

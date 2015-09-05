@@ -1185,4 +1185,3 @@ SmokeTestResource.postPrefixForm = function (_params) {
         return returnValue;
     }
 };
-

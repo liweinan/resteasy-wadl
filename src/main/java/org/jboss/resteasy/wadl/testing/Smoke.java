@@ -47,6 +47,5 @@ public class Smoke {
         return Response.status(200)
                 .entity("addUser is called, name : " + name + ", age : " + age)
                 .build();
-
     }
 }

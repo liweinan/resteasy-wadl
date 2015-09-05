@@ -169,23 +169,29 @@ public class ResteasyWadlServletWriter {
             param.setName(paramMetaData.getParamName());
             method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(FORM_PARAMETER)) {
-            Representation formRepresentation = getRepresentationByMediaType(request.getRepresentation(),
-                    MediaType.APPLICATION_FORM_URLENCODED_TYPE);
-            if (formRepresentation == null) {
-                formRepresentation = createRepresentation(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
-                request.getRepresentation().add(formRepresentation);
-            }
-
-
             param.setStyle(ParamStyle.QUERY);
+            Representation formRepresentation = createFormRepresentation(request);
             param.setName(paramMetaData.getParamName());
             formRepresentation.getParam().add(param);
-
             method.setRequest(request);
         } else if (paramMetaData.getParamType().equals(FORM)) {
             param.setStyle(ParamStyle.QUERY);
+            Representation formRepresentation = createFormRepresentation(request);
+            param.setName(paramMetaData.getParamName());
+            formRepresentation.getParam().add(param);
+            method.setRequest(request);
         }
         return param;
+    }
+
+    private Representation createFormRepresentation(Request request) {
+        Representation formRepresentation = getRepresentationByMediaType(request.getRepresentation(),
+                MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        if (formRepresentation == null) {
+            formRepresentation = createRepresentation(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+            request.getRepresentation().add(formRepresentation);
+        }
+        return formRepresentation;
     }
 
     private Representation createRepresentation(MediaType mediaType) {

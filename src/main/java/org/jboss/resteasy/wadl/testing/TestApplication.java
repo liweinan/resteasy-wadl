@@ -1,5 +1,8 @@
 package org.jboss.resteasy.wadl.testing;
 
+import org.jboss.resteasy.wadl.testing.form.FormResource;
+import org.jboss.resteasy.wadl.testing.locator.Parent;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,8 +13,10 @@ public class TestApplication extends javax.ws.rs.core.Application {
     HashSet<Object> singletons = new HashSet<Object>();
 
     public TestApplication() {
-        singletons.add(new HelloMartianResource());
-        singletons.add(new Smoke());
+//        singletons.add(new HelloMartianResource());
+//        singletons.add(new Smoke());
+//        singletons.add(new FormResource());
+        singletons.add(new Parent());
     }
 
     @Override
